@@ -1,0 +1,1084 @@
+{
+  "name": "AI Ecommerce Order Management Automation Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "81a4940f-7ab7-4135-b9a7-205253cfe40c",
+              "leftValue": "={{$items().length > 0}}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3456,
+        -1904
+      ],
+      "id": "d6d7eb61-6cb9-41c5-8de1-5a9324cc5001",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_status",
+              "keyValue": "Pending"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3664,
+        -1904
+      ],
+      "id": "a3c2d0af-8c32-42b2-991c-81e8708f867c",
+      "name": "Get a row from orders",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "order_items",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_id",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3840,
+        -1696
+      ],
+      "id": "4d8ec5f8-9f33-441d-b6b7-3494323528ee",
+      "name": "Get a row order items",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "products",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.product_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3680,
+        -1696
+      ],
+      "id": "898686fe-6c7c-403b-9bde-27e81a1a7e3f",
+      "name": "Get a row product",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3200,
+        -1920
+      ],
+      "id": "e74d4444-89b3-4f8f-b939-53b27483d60b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -3184,
+        -1760
+      ],
+      "id": "d9a38b42-1870-4986-b7cf-209a31f31995"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "abdf443f-525c-4ae1-867d-5ef452fc3951",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c4f820d2-ed55-42fe-816d-9979256e20ff",
+              "name": "customer_name",
+              "value": "={{ $json.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "3926bce7-0478-471a-b848-ab49f48c4f6b",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "59a4a516-7474-4dd2-baf2-0275fd3ca9f7",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "e3e40d5c-d9e0-4cc9-ac1b-98ccac1049c6",
+              "name": "total_amount",
+              "value": "={{ $json.total_amount }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2976,
+        -1936
+      ],
+      "id": "e6dd66a7-3585-4382-ae5b-9a61e864d78d",
+      "name": "Set node for order sequence"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0091ba63-197e-459d-82a4-3a6e0f18a47f",
+              "name": "Is your order confirmed?",
+              "value": "={{ $('customer confirmation').item.json['Is your order confirmed?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "fbe11d42-b437-44e3-a9ec-62c8cfc0aad0",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f2232e93-d864-4f41-965d-25ef441735f8",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2048,
+        -1536
+      ],
+      "id": "6a2ee9c6-07a6-48b4-886d-1e5da938fe5b",
+      "name": "Set node for order confirmation"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "order_status",
+              "keyValue": "Pending"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2800,
+        -1488
+      ],
+      "id": "2ef8ef41-fd7c-488c-8b1c-13378be2bb1b",
+      "name": "Get a row from orders1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Set node for order confirmation').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_status",
+              "fieldValue": "Confirmed"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        -1840
+      ],
+      "id": "f5fc1bee-bde4-41c8-ba03-b3ed1645b025",
+      "name": "Update a row in order table for yes",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Set node for order confirmation').item.json.id }}"
+            },
+            {
+              "keyName": "order_status",
+              "condition": "eq",
+              "keyValue": "Pending"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_status",
+              "fieldValue": "Cancelled"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        -1328
+      ],
+      "id": "721cb854-2923-4fed-961b-becc1c1d6bf8",
+      "name": "Update a row in orders for no",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e1b08ea6-262b-4488-8099-66268b252245",
+              "leftValue": "={{$json[\"Is your order confirmed?\"]}}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1840,
+        -1536
+      ],
+      "id": "ba6a4809-d117-4d72-b608-7b1a72eccf6b",
+      "name": "If for yes or no"
+    },
+    {
+      "parameters": {
+        "sendTo": "muhammadnaumankhan63@gmail.com",
+        "subject": "New Order To Deliver",
+        "message": "=Hello,\n\nA new order has been confirmed and needs to be delivered.\n\nOrder ID: {{$json[\"id\"]}}\nCustomer Name: {{$json[\"customer_name\"]}}\nCustomer Address: {{$json[\"address\"]}}\nTotal Amount:{{ $json.total_amount }}\nPlease update us once the parcel is delivered or returned with the following link.\n\nhttps://docs.google.com/forms/d/e/1FAIpQLSdi0wiaUgSEBcKCNq-xYCFFnabYllxZmfCioqen7m1AAQi1eg/viewform?usp=header\n\nThanks,\nLUXE\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -1424,
+        -1840
+      ],
+      "id": "43f5da1c-c106-46be-a535-caedd7a84226",
+      "name": "Send details to courier",
+      "webhookId": "1cc9671c-a077-43ad-abbc-e9342fdbd214",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6eZS0F7cpZQlz9ya",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Order Confirmation",
+        "message": "=Hi {{ $('Loop Over Items').item.json.customer_name }} your order for order id: {{ $json.id }} and total amount: {{ $('Get a row from orders').item.json.total_amount }} is placed. Please confirm your order by the following link:\nhttps://docs.google.com/forms/d/e/1FAIpQLSc6VQIqr4g77OwRzfb1wJv4W6At51tDs6XwjlQSiTpE7jUABA/viewform?usp=dialog",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -2784,
+        -1936
+      ],
+      "id": "d7a58104-6659-4e4f-b67e-b98348b016fc",
+      "name": "send email to customer for order confirmation",
+      "webhookId": "78b31203-6666-473c-adb2-c2ce5cf2799e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6eZS0F7cpZQlz9ya",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -2352,
+        -1280
+      ],
+      "id": "f305044c-d26f-4eb9-a9f3-8aa66a9012e4",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        -2368,
+        -1488
+      ],
+      "id": "4ad9cd61-5fec-4787-942a-a25654f14955"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f2516bb2-aa1b-4189-97c5-5dd7c791deb2",
+              "name": "Is_confirmed",
+              "value": "={{ $items(\"customer confirmation\").sort((a,b)=> new Date(b.json.Timestamp) - new Date(a.json.Timestamp))[0].json[\"Is your order confirmed?\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2992,
+        -1488
+      ],
+      "id": "826a6360-0da3-433f-a48f-fe9cbb5911b5",
+      "name": "sort customer trigger data",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "64f5fa50-eff8-4af5-abfa-b233c6d2f364",
+              "name": "Parcel Delivered?",
+              "value": "={{ $json['Parcel Delivered?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "161352f6-72b2-4a85-a959-2edf62d67037",
+              "name": "Enter the Order ID of Delivered Or Returned Parcel",
+              "value": "={{ $json['Enter the Order ID of Delivered Or Returned Parcel'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3760,
+        -1088
+      ],
+      "id": "7e4e8486-0780-4dc8-99da-842ae23773a1",
+      "name": "sort courier trigger data"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1Hh1YjVA3gRXPppDYBy5bDLxufn9ufbWRAiFe6fr8Bso",
+          "mode": "list",
+          "cachedResultName": "Order Confirmation (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Hh1YjVA3gRXPppDYBy5bDLxufn9ufbWRAiFe6fr8Bso/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 254855477,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Hh1YjVA3gRXPppDYBy5bDLxufn9ufbWRAiFe6fr8Bso/edit#gid=254855477"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3184,
+        -1488
+      ],
+      "id": "99d6622b-ddd5-4fbb-b16c-7df2777bd46c",
+      "name": "customer confirmation",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "lm44pi9NEEsvU7HX",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1iHY4XRMqmRpJC91pnJCp-61Z8Y2Z3aozyJb_ELfLl9c",
+          "mode": "list",
+          "cachedResultName": "Courier Service Confirmation (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iHY4XRMqmRpJC91pnJCp-61Z8Y2Z3aozyJb_ELfLl9c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1282595921,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iHY4XRMqmRpJC91pnJCp-61Z8Y2Z3aozyJb_ELfLl9c/edit#gid=1282595921"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -4096,
+        -1088
+      ],
+      "id": "e3cf8c67-ebbc-4ecd-a2ef-f65c5cd315e0",
+      "name": "courier confirmation",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "lm44pi9NEEsvU7HX",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1ffcbc82-f57c-4a76-b66e-d8a44dfeb1de",
+              "leftValue": "={{$json[\"Parcel Delivered?\"]}}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3120,
+        -1104
+      ],
+      "id": "b2bd5074-9b5a-4eaf-8801-f2f9e3127197",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3520,
+        -1088
+      ],
+      "id": "ed99e59a-4902-46a2-aee4-6253a0579e6a",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me2",
+      "typeVersion": 1,
+      "position": [
+        -3504,
+        -928
+      ],
+      "id": "f952f3eb-7f7f-4c81-8d01-3660af327ca9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "15395901-52c3-4d7d-b97e-574bfe8a748b",
+              "name": "Parcel Delivered?",
+              "value": "={{ $json['Parcel Delivered?'] }}",
+              "type": "string"
+            },
+            {
+              "id": "4d7e4d94-51f5-400f-a9e8-49e396e6b9ac",
+              "name": "Enter the Order ID of Delivered Or Returned Parcel",
+              "value": "={{ $json['Enter the Order ID of Delivered Or Returned Parcel'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3312,
+        -1104
+      ],
+      "id": "efad6ef2-c88c-4af2-803a-24ad5b74027a",
+      "name": "set node for parcel delivery"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json['Enter the Order ID of Delivered Or Returned Parcel'] }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_status",
+              "fieldValue": "Delivered"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2736,
+        -1232
+      ],
+      "id": "41755e80-bc53-4e07-8507-c9b39113cd59",
+      "name": "Update row for delivered",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep only the latest row\nitems = items.sort((a,b)=> new Date(b.json.Timestamp) - new Date(a.json.Timestamp));\nreturn [items[0]];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2624,
+        -1488
+      ],
+      "id": "1cd2b255-23f3-4e70-b3f1-bee3e5a83faf",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Keep only the latest row\nitems = items.sort((a,b)=> new Date(b.json.Timestamp) - new Date(a.json.Timestamp));\nreturn [items[0]];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3936,
+        -1088
+      ],
+      "id": "7e383a66-3cb4-46a1-af80-eaf65c502b19",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "orders",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json['Enter the Order ID of Delivered Or Returned Parcel'] }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "order_status",
+              "fieldValue": "Returned"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2736,
+        -928
+      ],
+      "id": "f9b482ae-8fb0-456a-9c79-e6da0c042421",
+      "name": "Update a row for returned",
+      "credentials": {
+        "supabaseApi": {
+          "id": "SVEd6MS1pfqmhYsp",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3872,
+        -1904
+      ],
+      "id": "32c8bd73-06f6-423c-8aa8-789dd9c3c4b9",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row from orders": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get a row order items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row order items": {
+      "main": [
+        [
+          {
+            "node": "Get a row product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Set node for order sequence",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row product": {
+      "main": [
+        []
+      ]
+    },
+    "Set node for order sequence": {
+      "main": [
+        [
+          {
+            "node": "send email to customer for order confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set node for order confirmation": {
+      "main": [
+        [
+          {
+            "node": "If for yes or no",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row from orders1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row in order table for yes": {
+      "main": [
+        [
+          {
+            "node": "Send details to courier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If for yes or no": {
+      "main": [
+        [
+          {
+            "node": "Update a row in order table for yes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row in orders for no",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Set node for order confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sort customer trigger data": {
+      "main": [
+        [
+          {
+            "node": "Get a row from orders1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "customer confirmation": {
+      "main": [
+        [
+          {
+            "node": "sort customer trigger data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "courier confirmation": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "sort courier trigger data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "set node for parcel delivery",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update row for delivered",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update a row for returned",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set node for parcel delivery": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "sort courier trigger data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get a row from orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "567f4d6b-4c6f-4fa5-bc6f-d5e08d8ba657",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f9ca05499a65d18ad1bb67bd915d3e37f826b13f50755ca37c97d448d967f525"
+  },
+  "id": "h8DgvGpD0KkcvwwQ",
+  "tags": []
+}
